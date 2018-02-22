@@ -6,7 +6,7 @@ Puppet::Type.type(:influx_config_auth).provide :ruby do
 
     sleep(10)
 
-    if !system("influx -username #{resource["superuser"]} -password #{resource["superpass"]} -execute ';'")
+    if !system("influx -host 127.0.0.1 -username #{resource["superuser"]} -password #{resource["superpass"]} -execute ';'")
       p " > auth disabled, or superuser is wrong.. lets fix it"
       sleep(10)
 
@@ -28,7 +28,7 @@ Puppet::Type.type(:influx_config_auth).provide :ruby do
       `influx -execute "DROP USER #{resource[:superuser]}"`
 
       p " > create user '#{resource[:superuser]}'"
-      `influx -execute "CREATE USER #{resource[:superuser]} WITH PASSWORD '#{resource[:superpass]}' WITH ALL PRIVILEGES"`
+      `influx -host 127.0.0.1 -execute "CREATE USER #{resource[:superuser]} WITH PASSWORD '#{resource[:superpass]}' WITH ALL PRIVILEGES"`
       # restart influx with old config
       p " > restart influx and try again"
       `systemctl stop influxd`
@@ -37,7 +37,7 @@ Puppet::Type.type(:influx_config_auth).provide :ruby do
       sleep(10)
 
       # check again
-      if !system("influx  -username #{resource["superuser"]} -password #{resource["superpass"]} -execute ';'")
+      if !system("influx -host 127.0.0.1 -username #{resource["superuser"]} -password #{resource["superpass"]} -execute ';'")
         p " > auth still wrong :("
         return false
       else
