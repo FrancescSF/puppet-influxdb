@@ -12,17 +12,17 @@ Puppet::Type.type(:influx_database).provide :ruby do
 
 
   def destroy
-    `influx #{auth_data} -execute 'DROP DATABASE #{resource[:name]}'`
+    `influx -host 127.0.0.1 #{auth_data} -execute 'DROP DATABASE #{resource[:name]}'`
   end
 
   def create
-    `influx #{auth_data} -execute 'CREATE DATABASE #{resource[:name]}'`
+    `influx -host 127.0.0.1 #{auth_data} -execute 'CREATE DATABASE #{resource[:name]}'`
   end
 
   def exists?
     sleep (20)
     
-    dbcmd =  `influx #{auth_data} -execute 'SHOW DATABASES' -format json`
+    dbcmd =  `influx -host 127.0.0.1 #{auth_data} -execute 'SHOW DATABASES' -format json`
     dbjson = JSON.parse(dbcmd)
     if dbjson["results"][0]["series"][0]["values"].any? { |i| i.include? resource[:name] }
       return true
