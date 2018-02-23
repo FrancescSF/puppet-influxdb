@@ -25,7 +25,7 @@ Puppet::Type.type(:influx_config_auth).provide :ruby do
       sleep(10)
 
       p " > drop user '#{resource[:superuser]}', if exists"
-      `influx -execute "DROP USER #{resource[:superuser]}"`
+      `influx -host 127.0.0.1 -execute "DROP USER #{resource[:superuser]}"`
 
       p " > create user '#{resource[:superuser]}'"
       `influx -host 127.0.0.1 -execute "CREATE USER #{resource[:superuser]} WITH PASSWORD '#{resource[:superpass]}' WITH ALL PRIVILEGES"`
